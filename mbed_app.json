@@ -2,23 +2,36 @@
     "config": {
         "sock-type": "TCP",
         "echo-server-hostname": {
-            "help": "Echo server host name.",
+            "help": "Echo server host name - 52.215.34.155",
             "value": "\"echo.mbedcloudtesting.com\""
         },
         "echo-server-port": {
             "help": "Echo server port number.",
             "value": 7
         },
+        "dns-retries": {
+            "help": "Number of DNS query retries that the DNS translator makes per server, before moving on to the next server. Total retries/attempts is always limited by dns-total-attempts.",
+            "value": 3
+        },
         "trace-level": {
             "help": "Options are TRACE_LEVEL_ERROR,TRACE_LEVEL_WARN,TRACE_LEVEL_INFO,TRACE_LEVEL_DEBUG",
             "macro_name": "MBED_TRACE_MAX_LEVEL",
             "value": "TRACE_LEVEL_INFO"
+        },
+        "radio-access-technology": {
+            "help": "Radio access technology to use. Value in integer: GSM=0, GSM_COMPACT=1, UTRAN=2, EGPRS=3, HSDPA=4, HSUPA=5, HSDPA_HSUPA=6, E_UTRAN=7, CATM1=8 ,NB1=9",
+            "value": 0
         }
   },
     "target_overrides": {
         "*": {
             "target.network-default-interface-type": "CELLULAR",
-            "mbed-trace.enable": false,
+            "QUECTEL_BG96.provide-default": true,
+            "QUECTEL_BG96.tx": "PA_2",
+            "QUECTEL_BG96.rx": "PA_3",
+            "QUECTEL_BG96.rts": "PA_1",
+            "QUECTEL_BG96.cts": "PA_0",
+            "mbed-trace.enable": true,
             "lwip.ipv4-enabled": true,
             "lwip.ethernet-enabled": false,
             "lwip.ppp-enabled": true,
@@ -28,11 +41,13 @@
             "platform.default-serial-baud-rate": 115200,
             "platform.stdio-buffered-serial": true,
             "cellular.debug-at": false,
+            "target.clock_source": "USE_PLL_MSI",
             "nsapi.default-cellular-plmn": 0,
-            "nsapi.default-cellular-sim-pin": "\"1234\"",
-            "nsapi.default-cellular-apn": 0,
-            "nsapi.default-cellular-username": 0,
-            "nsapi.default-cellular-password": 0
+            "nsapi.default-cellular-sim-pin": "\"1111\"",
+            "nsapi.default-cellular-apn": "\"everywhere\"",
+            "nsapi.default-cellular-username": "\"eesecure\"",
+            "nsapi.default-cellular-password": "\"secure\"",
+            "cellular.use-apn-lookup": false
         }
     }
 }

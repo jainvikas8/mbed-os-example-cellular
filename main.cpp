@@ -25,6 +25,8 @@
 #define TCP 1
 #define NONIP 2
 
+#define CYCLES 10
+#define WAIT_MS 60000
 // Number of retries /
 #define RETRY_COUNT 3
 
@@ -258,25 +260,42 @@ int main()
 
     MBED_ASSERT(iface);
 
-    // sim pin, apn, credentials and possible plmn are taken automatically from json when using NetworkInterface::set_default_parameters()
-    iface->set_default_parameters();
 
-    nsapi_error_t retcode = NSAPI_ERROR_NO_CONNECTION;
+    unsigned char loop = CYCLES;
 
-    /* Attempt to connect to a cellular network */
-    if (do_connect() == NSAPI_ERROR_OK) {
-        retcode = test_send_recv();
+    while (loop > 0)
+    {
+        loop--;
+        // sim pin, apn, credentials and possible plmn are taken automatically from json when using NetworkInterface::set_default_parameters()
+        iface->set_default_parameters();
+
+        nsapi_error_t retcode = NSAPI_ERROR_NO_CONNECTION;
+
+        /* Attempt to connect to a cellular network */
+        if (do_connect() == NSAPI_ERROR_OK) {
+            retcode = test_send_recv();
+        }
+
+        if (retcode == NSAPI_ERROR_OK) {
+            print_function("\n\nSuccess... \n\n");
+
+            if(loop > 0)
+            {
+                print_function("Sleeping for %d seconds...", (WAIT_MS/1000));
+                print_function("\n%d cycle(s) remaining... \n\n", loop);
+                wait_ms(WAIT_MS);
+            }
+
+        } else {
+            print_function("\n\nFailure. Exiting \n\n");
+            wait_ms(1000);
+        }
     }
 
     if (iface->disconnect() != NSAPI_ERROR_OK) {
-        print_function("\n\n disconnect failed.\n\n");
+            print_function("\n\n disconnect failed.\n\n");
     }
 
-    if (retcode == NSAPI_ERROR_OK) {
-        print_function("\n\nSuccess. Exiting \n\n");
-    } else {
-        print_function("\n\nFailure. Exiting \n\n");
-    }
 
 #if MBED_CONF_MBED_TRACE_ENABLE
     trace_close();
